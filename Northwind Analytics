@@ -295,3 +295,4 @@ SELECT
 FROM employees
 JOIN orders
   ON orders.employee_id = employees.employee_id;
+
