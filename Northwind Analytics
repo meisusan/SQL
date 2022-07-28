@@ -68,7 +68,7 @@ JOIN products p
 ON s.supplier_id = p.supplier_id
 GROUP BY s.supplier_id;
 
---7. The template code shows the query from the explanation. The Northwind store offers its customers discounts for some products. The discount for each item is stored in the discount column of the order_items table. (For example, a 0.20 discount means that the customer pays 1 - 0.2 = 0.8 of the original price.) Your task is to add a second column named total_price_after_discount.
+--7. The Northwind store offers its customers discounts for some products. The discount for each item is stored in the discount column of the order_items table. (For example, a 0.20 discount means that the customer pays 1 - 0.2 = 0.8 of the original price.) Your task is to add a second column named total_price_after_discount.
 SELECT
   SUM(unit_price * quantity) AS total_price,
   SUM(unit_price * quantity * (1 - discount)) AS total_price_after_discount
@@ -177,7 +177,7 @@ WHERE order_date >= '2016-07-05'
 GROUP BY e.employee_id, e.first_name, e.last_name
 ORDER BY sum_orders desc;
 
---18. Run the template query from the explanation. Compare the values in the units_in_stock and availability columns.
+--18. Compare the values in the units_in_stock and availability columns.
 SELECT
   product_id,
   product_name,
@@ -203,7 +203,7 @@ SELECT
   END AS experience
 FROM employees;
 
---20. Run the template query, and compare the values in the ship_country and shipping_cost columns. For countries other than the US and Canada, the shipping_cost value is NULL.
+--20. Compare the values in the ship_country and shipping_cost columns. For countries other than the US and Canada, the shipping_cost value is NULL.
 SELECT 
   order_id,
   customer_id,
