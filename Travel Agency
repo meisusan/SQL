@@ -1,0 +1,133 @@
+--In this SQL code, I am working with a database from a travel agency with many tables. 
+
+--1. Show all information about all cities which have the same area as Paris.
+SELECT * FROM city
+WHERE area = (
+ select area FROM city WHERE name = 'Paris');
+    
+--2. Find the names of all cities which have a population lower than Madrid.
+SELECT name
+FROM city
+WHERE population < (
+  SELECT population FROM city WHERE name = 'Madrid');
+
+--3. Find all information about trips whose price is higher than the average.
+SELECT *
+FROM trip
+WHERE price > (
+  SELECT AVG(price) FROM trip
+);
+
+--4. Find all information about hiking trips with difficulty 1, 2, or 3.
+SELECT * FROM hiking_trip 
+WHERE difficulty IN (1,2,3);
+
+--5. Find all information about all trips in cities whose area is greater than 100.
+SELECT *
+FROM trip
+WHERE city_id IN (
+  SELECT id
+  FROM city
+  WHERE area > 100
+);
+
+--6. Find all information about the cities which are less populated than all countries in the database.
+SELECT * FROM city
+WHERE population < ALL (
+  SELECT population
+  FROM country
+);
+
+--7. Find all information about all the city trips which have the same price as any hiking trip.
+SELECT *
+from trip
+WHERE price = ANY (
+  SELECT price
+  FROM hiking_trip
+);
+
+--8. Find all information about each country whose population is equal to or smaller than the population of the least populated city in that specific country.
+SELECT * 
+FROM country
+WHERE population <= (
+  SELECT MIN(population)
+  FROM city
+  where country_id = country.id);
+  
+--9. Find all information about cities with a rating higher than the average rating for all cities in that specific country.
+SELECT * 
+FROM city main_city
+WHERE rating > (
+  SELECT AVG(rating)
+  FROM city average_city
+  WHERE average_city.country_id = main_city.country_id
+  );
+  
+--10. Show all information about all trips to cities which have a rating lower than 4.
+SELECT * 
+FROM trip
+WHERE city_id IN (
+  SELECT id FROM city
+  WHERE city.rating < 4
+  );
+
+--11. Select all countries where there is at least one mountain.
+SELECT *
+FROM country
+WHERE EXISTS (
+  SELECT *
+  FROM mountain
+  WHERE country_id = country.id
+  );
+  
+--12. Select all mountains with no hiking trips to them.
+SELECT *
+FROM mountain
+WHERE NOT EXISTS (
+  SELECT * 
+  FROM hiking_trip
+  WHERE mountain_id = mountain.id
+  );
+
+--13. Select the hiking trip with the longest distance (column length) for every mountain.
+SELECT *
+FROM hiking_trip main_trip
+WHERE length >= ALL (
+  SELECT length 
+  FROM hiking_trip length_trip
+  WHERE main_trip.mountain_id = length_trip.mountain_id
+  );
+
+--14. Select those trips which last shorter than any hiking_trip with the same price.
+SELECT *
+FROM trip
+WHERE days < ANY (
+  SELECT days
+  FROM hiking_trip
+  WHERE trip.price = hiking_trip.price
+  );
+
+--15. Show mountains together with their countries. The countries must have at least 50,000 residents.
+SELECT *
+FROM mountain, (
+  SELECT * FROM country
+  WHERE population > 50000) AS big_country
+  WHERE big_country.id = mountain.country_id
+  ;
+
+--16. Show hiking trips together with their mountains. The mountains must be at least 3,000 high. Select only the columns length and height.
+SELECT 
+	length,
+    height
+FROM hiking_trip, (
+  SELECT * FROM mountain
+  WHERE height >= 3000) AS tall_mountain
+WHERE tall_mountain.id = hiking_trip.mountain_id;
+
+--17. Show each mountain name together with the number of hiking trips to that mountain (name the column count).
+SELECT 
+	name,
+    (SELECT COUNT(*)
+     FROM hiking_trip
+     WHERE mountain_id = mountain.id) AS count
+FROM mountain;
