@@ -1,0 +1,66 @@
+--In this SQL code, I'm querying, inserting, updating, and deleting from a database that's holding information acquired from a restaurant.
+
+--1. Select all data from the dish table, and explore the contents.
+SELECT * FROM dish;
+
+--2. The restaurant owners decided to introduce some Balkan cuisine, so we need to refresh the menu a little bit. Add a dish called Cevapcici with an ID of 9 and a price of 27. It's a main course.
+INSERT INTO dish 
+VALUES (9, 'main course', 'Cevapcici', 27);
+
+--3. Balkan cuisine is getting popular, so we need another Balkan item on the menu. Add Kosovo Bread with ID of 10; it's a starter. We have yet to decide on the price, so omit it for now.
+INSERT INTO dish
+VALUES (10, 'starter', 'Kosovo Bread');
+
+--4. Add the starter Kosovo Bread with ID 10 again to the dish table. This time, explicitly insert a NULL value into the price column.
+INSERT INTO dish
+VALUES (10, 'starter', 'Kosovo Bread', NULL);
+
+--5. Lots of Czech tourists are now coming to the restaurant, and they would like to try some of their national dishes. Let's give them: A main course named Gulas s knedlikem (id 11, price 29). A dessert named Vosi Hnizda (id 12, price 14).
+INSERT INTO dish
+VALUES
+  (11, 'main course', 'Gulas s knedlikem', 29),
+  (12, 'dessert', 'Vosi Hnizda', 14);
+  
+--6. Add your favorite dish to the menu! It can be anything you like. Just be reasonable with the price (which must be an integer) and set the id to 13.
+INSERT INTO dish
+VALUES (13, 'starter', 'Greek Pizza', 14);
+
+--7. The owners of the restaurant complain that the item with ID 2 sells poorly. This might be because Spring Scrolls don't really sound like something particularly edible. Correct the name by changing it to Spring Rolls.
+UPDATE dish
+SET name = 'Spring Rolls'
+WHERE id = 2;
+
+--8. Spring Rolls now sell like crazy, and nobody's interested in Prawn Salad (ID 1) anymore. We need to change its name to something more exotic—let's try Green Sea Dragon. Apart from that, set the price at 10 to encourage customers to try the dish.
+UPDATE dish
+SET name = 'Green Sea Dragon', price = 10
+WHERE id = 1;
+
+--9. It's happy hour at our restaurant! Change the price of all main courses to 20.
+UPDATE dish
+SET price = 20
+WHERE type = 'main course';
+
+--10. The restaurant owners think the starters are so delicious and popular that they should be much more expensive. Try multiplying their prices by 2. Think in advance: what will the price of Kosovo Bread be after the change? Remember to check if your guess was correct!
+UPDATE dish
+SET price = 2 * price
+WHERE type = 'starter';
+
+--11. Oops, we've run out of sugar! Delete all desserts from our menu.
+DELETE FROM dish
+WHERE type = 'dessert';
+
+--12. The owners finally decided on a single cuisine. They want to serve Creole dishes, so delete all the data from the dish table to make room for new meals.
+DELETE FROM dish;
+
+--13. The restaurant owners have already started to build up their new Creole menu. Let's help them by adding a new main course, Rice and Gravy, with the ID 4 and a price of 28.
+INSERT INTO dish
+VALUES (4, 'main course', 'Rice and Gravy', 28);
+
+--14. Doberge Cake (ID 3) in our table is too expensive, so customers don't want to buy it. Let's modify the price to 10.
+UPDATE dish
+SET price = 10
+WHERE id = 3;
+
+--15. Oysters Bienville (ID 1) aren't really popular. Let's remove them from the menu.
+DELETE FROM dish
+WHERE id = 1;
