@@ -1,0 +1,29 @@
+--In this SQL code, I am working with data from a zoo and stores data about animals, zoo employees, and people who 'adopt' animals to help the zoo financially.
+
+--1. Insert data into the animal table for two new mammals: id: 6	species: bear	name: Max	age: 2 arrived_date: today, id: 7 species: tiger	name: Smokey	age: 1	arrived_date: today. At this time, we don't know any more about these animals.
+INSERT INTO animal (id, species, name, age, arrived_date)
+VALUES 
+  (6, 'bear', 'Max', 2, current_date),
+  (7, 'tiger', 'Smokey', 1, current_date);
+  
+--2. Delete data for the adoptive person John Franklin. Recall that the name of the relevant table is adoptive_person.
+DELETE FROM adoptive_person
+WHERE first_name = 'John'
+AND last_name = 'Franklin';
+
+--3. A visitor discovered a mistake in the zoo database. The picture for the pool frog actually shows an elephant. Update the frog's picture (using the picture column) by setting it to the default value for this column.
+UPDATE animal
+SET picture = DEFAULT
+WHERE species = 'pool frog';
+
+--4. Our zoo has decided to sell all animals who come from Boston and are over five years old to another zoo. Remove the data of the sold animals from our database.
+DELETE FROM animal
+WHERE age > 5
+AND city = 'Boston';
+
+--5. We recently sold a pool frog to another zoo. Its adoptive person(s) want to change their animal to the parrot with animal_id = 2. Update the records in the adoptive_person table to reflect this change.
+UPDATE adoptive_person
+SET animal_id = 2
+FROM animal
+WHERE animal.id = animal_id
+  AND species = 'pool frog';
