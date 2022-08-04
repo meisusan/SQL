@@ -296,3 +296,72 @@ FROM employees
 JOIN orders
   ON orders.employee_id = employees.employee_id;
 
+--27. We need a report that will show the number of products with high and low availability in all product categories. Show three columns: category_name, high_availability (count the products with more than 30 units in stock) and low_availability (count the products with 30 or fewer units in stock).
+SELECT
+	c.category_name,
+    COUNT(CASE
+          WHEN p.units_in_stock > 30 THEN p.product_id
+          END) AS high_availability,
+    COUNT(CASE
+          WHEN p.units_in_stock <= 30 THEN p.product_id
+          END) AS low_availability
+FROM categories c
+JOIN products p
+ON p.category_id = c.category_id
+GROUP BY c.category_name;
+
+--28. There have been a lot of orders shipped to France. Of these, how many order items were sold at full price and how many were discounted? Show two columns with the respective counts: full_price and discounted_price.
+SELECT
+  SUM(CASE
+      WHEN discount = 0 then 1
+      END) AS full_price,
+  SUM(CASE
+      WHEN discount > 0 then 1
+      END) AS discounted_price
+FROM order_items oi
+JOIN orders o
+ON o.order_id = oi.order_id
+WHERE o.ship_country = 'France';
+
+--29. We want a report that will show each supplier alongside their number of units in stock and their number of expensive units in stock. Show four columns: supplier_id, company_name, all_units (all units in stock supplied by that supplier), and expensive_units (units in stock with a unit price over 40.0, supplied by that supplier).
+SELECT
+  s.supplier_id,
+  s.company_name,
+  sum(p.units_in_stock) AS all_units,
+  SUM(CASE WHEN p.unit_price > 40 THEN units_in_stock ELSE 0 END) AS expensive_units
+FROM suppliers s
+JOIN products p
+ON s.supplier_id = p.supplier_id
+GROUP BY s.supplier_id, s.company_name
+
+--30. For each product, show the following columns: product_id, product_name, unit_price, and price_level. The price_level column should show one of the following values: 'expensive' for products with a unit price above 100. 'average' for products with a unit price above 40 but no more than 100. 'cheap' for other products.
+SELECT
+  p.product_id,
+  p.product_name,
+  p.unit_price,
+  CASE
+    WHEN unit_price > 100 THEN 'expensive'
+    WHEN unit_price > 40 AND unit_price <= 100 THEN 'average'
+    ELSE 'cheap'
+  END AS price_level
+FROM products p
+
+--31. We would like to categorize all orders based on their total price (before any discount). For each order, show the following columns: order_id, total_price (calculated before discount)
+price_group, which should have the following values: 'high' for a total price over $2,000. 'average' for a total price between $600 and $2,000, both inclusive. 'low' for a total price under $600.
+SELECT
+  order_id, 
+  SUM(unit_price * quantity) AS total_price,
+  CASE
+    WHEN SUM(unit_price * quantity) > 2000 THEN 'high'
+    WHEN SUM(unit_price * quantity) > 600 THEN 'average'
+    ELSE 'low'
+  END AS price_group
+FROM order_items
+GROUP BY order_id;
+
+--32. Group all orders based on the freight column. Show three columns in your report: low_freight – the number of orders where the freight value is less than 40.0. avg_freight – the number of orders where the freight value is greater than equal to or 40.0 but less than 80.0. high_freight – the number of orders where the freight value is greater than equal to or 80.0.
+SELECT
+  COUNT(CASE WHEN freight < 40 THEN freight END) AS low_freight,
+  COUNT(CASE WHEN freight >= 40 AND freight < 80 THEN freight END) AS avg_freight,
+  COUNT(CASE WHEN freight >= 80 THEN freight END) AS high_freight
+FROM orders;
